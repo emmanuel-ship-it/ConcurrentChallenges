@@ -1,31 +1,33 @@
 # ConcurrentChallenges
 
+## Overview
+
 ConcurrentChallenges is a Go project that demonstrates advanced concurrent processing through two real-world challenges:
 
-1. **Concurrent Log Processor**
-   Reads a large log file in chunks, processes it concurrently, counts occurrences of specified keywords (case-insensitive), and outputs the results in descending order of frequency.
+### 1. Concurrent Log Processor
+Reads a large log file in chunks, processes it concurrently, counts occurrences of specified keywords (case-insensitive), and outputs the results in descending order of frequency.
 
-2. **Prime Palindrome Finder**
-   Uses concurrency to find the first *N* prime palindromic numbers and calculates their sum.
+### 2. Prime Palindrome Finder
+Uses concurrency to find the first *N* prime palindromic numbers and calculates their sum.
 
 Both challenges employ best practices in concurrency, structured logging using [zap](https://github.com/uber-go/zap), configuration via command-line flags, and unit testing with [testify](https://github.com/stretchr/testify).
 
 ## Table of Contents
 
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Concurrent Log Processor](#concurrent-log-processor)
-  - [Prime Palindrome Finder](#prime-palindrome-finder)
-- [Running Tests](#running-tests)
-- [Development Notes](#development-notes)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+* [Project Structure](#project-structure)
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [Usage](#usage)
+  * [Concurrent Log Processor](#concurrent-log-processor)
+  * [Prime Palindrome Finder](#prime-palindrome-finder)
+* [Running Tests](#running-tests)
+* [Development Notes](#development-notes)
+* [License](#license)
+* [Acknowledgments](#acknowledgments)
 
 ## Project Structure
 
-```
+```plaintext
 ConcurrentChallenges/
 ├── go.mod
 ├── README.md
@@ -35,30 +37,30 @@ ConcurrentChallenges/
 ├── internal/
 │   ├── logprocessor/
 │   │   ├── config.go         # Log processor configuration and validation
-│   │   ├── processor.go      # Core logic for reading files, processing log lines concurrently, and aggregating keyword counts
+│   │   ├── processor.go      # Core logic for reading files and processing
 │   │   └── processor_test.go # Unit tests for the log processor package
 │   └── primepalindrome/
 │       ├── config.go         # Prime palindrome configuration and validation
-│       ├── finder.go         # Logic for concurrently finding prime palindromic numbers
+│       ├── finder.go         # Logic for finding prime palindromic numbers
 │       └── finder_test.go    # Unit tests for the prime palindrome package
-├── main_logprocessor.go      # Main application for the log processor challenge
-└── main_primepalindrome.go   # Main application for the prime palindrome challenge
+├── main_logprocessor.go      # Main application for the log processor
+└── main_primepalindrome.go   # Main application for the prime palindrome
 ```
 
 ## Prerequisites
 
-- **Go 1.20+** (or later) must be installed
-- A working Go development environment (e.g., [GoLand](https://www.jetbrains.com/go/) or VS Code with the Go extension)
+* Go 1.20 or later
+* A working Go development environment ([GoLand](https://www.jetbrains.com/go/) or VS Code with Go extension)
 
 ## Installation
 
-1. **Clone the repository:**
+1. Clone the repository:
    ```bash
-   git clone https://your.repo.url/ConcurrentChallenges.git
+   git clone https://github.com/yourusername/ConcurrentChallenges.git
    cd ConcurrentChallenges
    ```
 
-2. **Download Dependencies:**
+2. Install dependencies:
    ```bash
    go mod tidy
    ```
@@ -67,62 +69,73 @@ ConcurrentChallenges/
 
 ### Concurrent Log Processor
 
-The log processor reads a log file in chunks, processes it concurrently, and counts the frequency of specified keywords.
+Process log files with concurrent keyword counting:
 
-**Run the Log Processor:**
 ```bash
-go run main_logprocessor.go -file="path/to/log.txt" -workers=4 -chunkSize=4096 -timeout=10s -keywords="INFO,ERROR,DEBUG"
+go run main_logprocessor.go \
+    -file="path/to/log.txt" \
+    -workers=4 \
+    -chunkSize=4096 \
+    -timeout=10s \
+    -keywords="INFO,ERROR,DEBUG"
 ```
 
-**Flags:**
-- `-file`: Path to the log file
-- `-workers`: Number of concurrent worker goroutines
-- `-chunkSize`: Size (in bytes) of the chunks used to read the file
-- `-timeout`: Processing timeout duration (e.g., `10s`)
-- `-keywords`: Comma-separated list of keywords to search for
+**Available flags:**
+* `-file`: Path to the log file
+* `-workers`: Number of concurrent workers
+* `-chunkSize`: File read chunk size in bytes
+* `-timeout`: Processing timeout duration
+* `-keywords`: Comma-separated keywords to search
 
 ### Prime Palindrome Finder
 
-The prime palindrome finder uses concurrency to search for the first *N* prime palindromic numbers and computes their sum.
+Find prime palindromic numbers concurrently:
 
-**Run the Prime Palindrome Finder:**
 ```bash
 go run main_primepalindrome.go -N=10 -timeout=10s
 ```
 
-**Flags:**
-- `-N`: Number of prime palindromic numbers to find
-- `-timeout`: Processing timeout duration (e.g., `10s`)
-
-Both applications output logs using a structured logger (zap) and print results to the console.
+**Available flags:**
+* `-N`: Number of prime palindromes to find
+* `-timeout`: Processing timeout duration
 
 ## Running Tests
 
-Unit tests are provided for both challenges. To run all tests, execute:
+Execute all tests with:
+
 ```bash
 go test ./...
 ```
 
-This command runs tests in the `internal/logprocessor` and `internal/primepalindrome` packages using [testify](https://github.com/stretchr/testify).
-
 ## Development Notes
 
-- **Modular Structure:**
-  The project separates concerns by placing shared code (e.g., logging) in the `pkg` directory and domain-specific logic in the `internal` directory.
+### Modular Structure
+The project uses a clean architecture approach:
+* `pkg/`: Shared utilities and interfaces
+* `internal/`: Core business logic and implementations
 
-- **Configuration & Logging:**
-  Each challenge has its own configuration module and uses a common logger from `pkg/logger/logger.go`.
+### Configuration & Logging
+* Each module has its own configuration
+* Structured logging with zap
+* Command-line flag configuration
 
-- **Concurrency:**
-  Both challenges use Go's `context` package for cancellation and timeouts, along with goroutines and channels for concurrent processing.
+### Concurrency
+* Uses Go's `context` package for cancellation
+* Implements worker pools and channels
+* Handles timeouts gracefully
 
-- **GoLand Integration:**
-  If using GoLand, open the project directory and create separate Run/Debug configurations for `main_logprocessor.go` and `main_primepalindrome.go`. Tests can be run directly from the IDE.
+### IDE Integration
+Set up separate Run/Debug configurations in GoLand for:
+* `main_logprocessor.go`
+* `main_primepalindrome.go`
+* Test configurations
+
+## License
+
+[MIT License](LICENSE)
 
 ## Acknowledgments
 
-- [Uber zap](https://github.com/uber-go/zap) for structured logging
-- [Testify](https://github.com/stretchr/testify) for unit testing
-- The Go community for best practices on concurrent programming
-
-Happy Coding!
+* [Uber zap](https://github.com/uber-go/zap) - Structured logging
+* [Testify](https://github.com/stretchr/testify) - Testing framework
+* Go community for concurrent programming patterns
